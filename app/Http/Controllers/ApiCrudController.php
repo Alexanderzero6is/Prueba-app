@@ -10,21 +10,21 @@ class ApiCrudController extends Controller
 {
     public function store(Request $request)
     {
-        // 1. Validamos los datos que vienen del formulario de Alexander
+        // Se valida los datos que vienen del formulario
         $request->validate([
             'nombre_apellido' => 'required|string',
             'contraseña' => 'required|string'
         ]);
 
         try {
-            // 2. Consulta SQL pura inyectada (Sin Eloquent)
-            // Asumiendo que tu tabla se llama 'usuarios'
+            // Consulta SQL pura inyectada
+            // La tabla se llama 'usuarios' y tiene las columnas 'nombre' y 'password
             DB::insert('INSERT INTO usuarios (nombre, password) VALUES (?, ?)', [
                 $request->nombre_apellido,
                 Hash::make($request->contraseña) // Siempre hashear contraseñas
             ]);
 
-            // 3. Devolvemos una respuesta JSON de éxito
+            // Devolvemos una respuesta JSON de éxito
             return response()->json([
                 'status' => true,
                 'message' => 'Usuario registrado exitosamente en la base de datos con SQL puro.'

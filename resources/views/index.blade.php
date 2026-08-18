@@ -1,0 +1,32 @@
+<x-app-layout>
+    <h1 class="text-3xl font-bold">Ingrese los datos</h1>
+    <form>
+        <label>
+            Usario:
+            <input
+                type="text"
+                name="nombre_apellido"
+                placeholder="nombre_apellido"
+                class="border border-gray-300 rounded px-3"
+            />
+        </label><br><br>
+
+        <label>
+            Contraseña:
+            <input
+                type="text"
+                name="contraseña"
+                placeholder="contraseña"
+                class="border border-gray-300 rounded px-3"
+            />
+        </label><br><br>
+
+        <button type="submit" class="border rounded bg-blue-600 px-4 py-2 text-white">
+            <a href="{{route('posts.show', ['post' => 1])}}">Login</a>
+        </button>
+
+        <button type="submit" class="border rounded bg-blue-600 px-4 py-2 text-white">
+            <a href="{{route('posts.create')}}">Create account</a>
+        </button>
+    </form>
+</x-app-layout>

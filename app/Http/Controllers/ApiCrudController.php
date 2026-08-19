@@ -94,4 +94,43 @@ class ApiCrudController extends Controller
             ], 500);
         }
     }
+
+    public function logout(Request $request)
+    {
+        // Se extrae el Bearer Token del header de la petición
+        $token = $request->bearerToken();
+
+        if (!$token) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Token no proporcionado en la petición'
+            ], 401);
+        }
+
+        // Se Hashea el token recibido (así es como lo guardamos en el login)
+        $hashedToken = hash('sha256', $token);
+
+        try {
+            // Eliminamos el token de la base de datos con SQL puro
+            $eliminado = DB::delete('DELETE FROM personal_access_tokens WHERE token = ?', [$hashedToken]);
+
+            if ($eliminado) {
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Sesión cerrada correctamente. Token revocado.'
+                ], 200);
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'El token es inválido o la sesión ya estaba cerrada.'
+                ], 404);
+            }
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Error en el servidor: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

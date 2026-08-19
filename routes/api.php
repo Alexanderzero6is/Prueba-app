@@ -13,3 +13,6 @@ Route::post('/registro', [ApiCrudController::class, 'store']);
 
 // Ruta de Post para iniciar sesión y generar un token de acceso usando SQL puro
 Route::post('/login', [ApiCrudController::class, 'login']);
+
+// Ruta de Post para cerrar sesión y eliminar el token de acceso
+Route::post('/logout', [ApiCrudController::class, 'logout']);

@@ -10,3 +10,6 @@ Route::get('/user', function (Request $request) {
 
 // Ruta de Post para registrar un usuario en la base de datos usando SQL puro
 Route::post('/registro', [ApiCrudController::class, 'store']);
+
+// Ruta de Post para iniciar sesión y generar un token de acceso usando SQL puro
+Route::post('/login', [ApiCrudController::class, 'login']);

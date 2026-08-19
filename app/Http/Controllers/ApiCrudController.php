@@ -27,13 +27,70 @@ class ApiCrudController extends Controller
             // Devolvemos una respuesta JSON de éxito
             return response()->json([
                 'status' => true,
-                'message' => 'Usuario registrado exitosamente en la base de datos con SQL puro.'
+                'message' => 'Usuario registrado exitosamente en la base de datos.'
             ], 201);
 
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
                 'message' => 'Error al insertar en la base de datos: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function login(Request $request)
+    {
+        // Se validan los datos enviados
+        $request->validate([
+            'nombre_apellido' => 'required|string',
+            'contraseña' => 'required|string'
+        ]);
+
+        try {
+            // Se Busca al usuario usando SQL puro
+            $usuarios = DB::select('SELECT * FROM usuarios WHERE nombre = ? LIMIT 1', [$request->nombre_apellido]);
+
+            if (empty($usuarios)) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Usuario no encontrado'
+                ], 404);
+            }
+
+            $usuario = $usuarios[0];
+
+            // Verificación de la contraseña con el Hash
+            if (!Hash::check($request->contraseña, $usuario->password)) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Contraseña incorrecta'
+                ], 401);
+            }
+
+            // Generación del Bearer Token manualmente (Sin Eloquent)
+            $plainTextToken = bin2hex(random_bytes(40));
+            $hashedToken = hash('sha256', $plainTextToken);
+
+            // Se inserta el token en la tabla de Sanctum usando SQL puro
+            DB::insert('INSERT INTO personal_access_tokens (tokenable_type, tokenable_id, name, token, abilities, created_at, updated_at) VALUES (?, ?, ?, ?, ?, NOW(), NOW())', [
+                'usuarios',
+                $usuario->id,
+                'API Token',
+                $hashedToken,
+                '["*"]'
+            ]);
+
+            // Se devuelve el token al usuario
+            return response()->json([
+                'status' => true,
+                'message' => 'Login exitoso',
+                'token' => $plainTextToken // Bearer Token que se usará en el CRUD
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Error en el servidor: ' . $e->getMessage()
             ], 500);
         }
     }

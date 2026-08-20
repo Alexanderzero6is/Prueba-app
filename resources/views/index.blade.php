@@ -40,15 +40,12 @@
             box-sizing: border-box;
         }
 
-<<<<<<< HEAD
         input::placeholder {
             color: #9ca3af;
             opacity: 0.7;
             font-weight: normal;
         }
 
-=======
->>>>>>> 598c370a72a3d6df6dfbd3b05eddaee346e65979
         button {
             width: 100%;
             padding: 10px;

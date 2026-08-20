@@ -58,20 +58,28 @@ class ApiCrudController extends Controller
             $usuarios = DB::select('SELECT * FROM usuarios WHERE nombre = ? LIMIT 1', [$request->nombre_apellido]);
 
             if (empty($usuarios)) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Usuario no encontrado',
-                ], 404);
+                // Si es Postman/Bruno
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Usuario no encontrado',
+                    ], 404);
+                }
+                // Si es desde la web (Blade)
+                return back()->withErrors(['nombre_apellido' => 'El usuario ingresado no existe.']);
             }
 
             $usuario = $usuarios[0];
 
             // Verificación de la contraseña con el Hash
             if (! Hash::check($request->contraseña, $usuario->password)) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Contraseña incorrecta',
-                ], 401);
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Contraseña incorrecta',
+                    ], 401);
+                }
+                return back()->withErrors(['contraseña' => 'La contraseña es incorrecta.']);
             }
 
             // Generación del Bearer Token manualmente (Sin Eloquent)

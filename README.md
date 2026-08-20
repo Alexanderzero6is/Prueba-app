@@ -113,7 +113,7 @@ http://localhost:8000
 
 ---
 
-## 📖 Guía de Uso - Para Empleados
+## 📖 Guía de Uso - Para Usuarios
 
 ### 1. Crear una Cuenta
 
@@ -195,29 +195,8 @@ php artisan migrate
 php artisan migrate:rollback
 ```
 
-### Formato de código
-
-Para mantener consistencia en el código, ejecuta Laravel Pint:
-
-```bash
-vendor/bin/pint
-```
-
-### Debugging
-
-Durante el desarrollo, puedes usar:
-
-```bash
-# Laravel Tinker - REPL interactivo
-php artisan tinker
-
-# Ver logs en tiempo real
-php artisan pail
-```
-
----
-
-## 📝 Variables de Entorno
+###
+### 📝 Variables de Entorno
 
 Configura el archivo `.env` con las siguientes variables importantes:
 
@@ -228,7 +207,7 @@ APP_KEY=
 APP_DEBUG=true
 APP_URL=http://localhost:8000
 
-DB_CONNECTION=sqlite
+DB_CONNECTION=mysql
 # DB_DATABASE=/full/path/to/database.sqlite
 
 MAIL_DRIVER=log
@@ -242,7 +221,7 @@ La aplicación utiliza una tabla principal de usuarios con campos como:
 
 - `id`: Identificador único
 - `name`: Nombre del usuario
-- `email`: Correo electrónico (único)
+-
 - `password`: Contraseña hasheada
 - `created_at`: Fecha de creación
 - `updated_at`: Última actualización
@@ -257,14 +236,4 @@ La aplicación utiliza una tabla principal de usuarios con campos como:
 - ✅ Protección contra CSRF en formularios
 - ✅ Escapado de salida en vistas
 
----
 
-## 📄 Licencia
-
-Este proyecto está bajo licencia **MIT**. Ver archivo [LICENSE](LICENSE) para más detalles.
-
----
-
-## 📞 Soporte
-
-Para reportar problemas o sugerencias, por favor abre un issue en el repositorio de la aplicación.

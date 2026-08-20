@@ -73,7 +73,7 @@
     <div class="login-container">
         <h2 class="text-3xl font-bold">Intranet - Login</h2>
 
-        <form action="/login" method="POST">
+        <form action="/api/login" method="POST">
             @csrf
 
             <label>

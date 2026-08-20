@@ -65,15 +65,15 @@
 
     <div class="login-container">
         <h2 class="text-3xl font-bold" style="margin-bottom: 20px;">Registro de Cuenta</h2>
-        
-        <form action="/registro" method="POST">
+
+        <form action="/api/registro" method="POST">
             @csrf
             <label style="font-weight: 600; color: #374151; font-size: 14px; margin-bottom: 5px; display: block;">
                 Nombre de Usuario:
                 <input
                     type="text"
                     name="nombre_apellido"
-                    placeholder="Ej: Juan Perez"
+                    placeholder="Ej: Juan_Perez"
                     required
                 >
             </label>
@@ -92,7 +92,7 @@
             <button type="submit">
                 Crear cuenta
             </button>
-            
+
             <a href="{{ route('posts.index') }}" style="text-decoration: none;">
                 <button type="button" style="background-color: #6b7280; margin-top: 10px;">
                     Volver al Login

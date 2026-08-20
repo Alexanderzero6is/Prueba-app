@@ -293,4 +293,112 @@ class ApiCrudController extends Controller
             ], 500);
         }
     }
+
+    public function destroy(Request $request)
+    {
+        // Primero intentamos obtener el Bearer Token
+        $token = $request->bearerToken();
+
+        // Si viene desde Blade, buscamos el token en la cookie
+        if (! $token) {
+            $token = $request->cookie('intranet_token');
+        }
+
+        // Si no existe token, no sabemos qué usuario eliminar
+        if (! $token) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Token no proporcionado.',
+            ], 401);
+        }
+
+        // Hasheamos el token para buscarlo en MySQL
+        $hashedToken = hash('sha256', $token);
+
+        try {
+
+            // Buscamos a qué usuario pertenece el token
+            $registroToken = DB::selectOne(
+                'SELECT tokenable_id
+             FROM personal_access_tokens
+             WHERE token = ?
+             LIMIT 1',
+                [$hashedToken]
+            );
+
+            if (! $registroToken) {
+
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Token inválido.',
+                    ], 401);
+                }
+
+                return redirect()->route('posts.index');
+            }
+
+            // Obtenemos el ID del usuario autenticado
+            $usuarioId = $registroToken->tokenable_id;
+
+
+            // Iniciamos una transacción
+            DB::beginTransaction();
+
+            // Primero eliminamos todos los tokens de ese usuario
+            DB::delete(
+                'DELETE FROM personal_access_tokens
+             WHERE tokenable_id = ?',
+                [$usuarioId]
+            );
+
+            // Después eliminamos al usuario
+            $eliminado = DB::delete(
+                'DELETE FROM usuarios
+             WHERE id = ?',
+                [$usuarioId]
+            );
+
+            DB::commit();
+
+
+            if (! $eliminado) {
+
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Usuario no encontrado.',
+                    ], 404);
+                }
+
+                return redirect()->route('posts.index');
+            }
+
+
+            // Si viene desde Postman / API
+            if ($request->expectsJson()) {
+
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Cuenta eliminada correctamente.',
+                ], 200);
+            }
+
+
+            // Si viene desde Blade
+            return redirect()
+                ->route('posts.index')
+                ->withoutCookie('intranet_token');
+
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Error al eliminar la cuenta: '.$e->getMessage(),
+            ], 500);
+        }
+    }
 }

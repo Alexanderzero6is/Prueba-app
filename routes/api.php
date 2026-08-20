@@ -20,3 +20,6 @@ Route::post('/logout', [ApiCrudController::class, 'logout']);
 
 // Ruta para editar los datos del usuario
 Route::post('/actualizar', [ApiCrudController::class, 'update']);
+
+// Eliminamos la cuenta
+Route::delete('/delete-account', [ApiCrudController::class, 'destroy']);

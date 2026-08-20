@@ -31,6 +31,10 @@ class PostController extends Controller
     {
         $usuario = $request->attributes->get('usuario_intranet');
 
+        if (! $usuario) {
+            return redirect()->route('posts.index');
+        }
+
         return view('posts.show', compact('usuario'));
     }
 }

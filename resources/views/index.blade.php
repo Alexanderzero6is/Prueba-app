@@ -40,6 +40,12 @@
             box-sizing: border-box;
         }
 
+        input::placeholder {
+            color: #9ca3af;
+            opacity: 0.7;
+            font-weight: normal;
+        }
+
         button {
             width: 100%;
             padding: 10px;
@@ -67,37 +73,44 @@
     <div class="login-container">
         <h2 class="text-3xl font-bold">Intranet - Login</h2>
 
-        <form action="/api/login" method="POST">
+        <form action="/login" method="POST">
+            @csrf
 
             <label>
                 Usuario:
                 <input
                     type="text"
                     name="nombre_apellido"
-                    placeholder="nombre_apellido"
-                    class="border border-gray-300 rounded px-3"
+                    placeholder="Ej: Juan Perez"
                     required
                 />
-            </label><br><br>
+                @error('nombre_apellido')
+                    <div class="error">{{ $message }}</div>
+                @enderror
+            </label><br>
 
             <label>
                 Contraseña:
                 <input
                     type="password"
                     name="contraseña"
-                    placeholder="contraseña"
-                    class="border border-gray-300 rounded px-3"
+                    placeholder="••••••••"
                     required
                 />
-            </label><br><br>
+                @error('contraseña')
+                    <div class="error">{{ $message }}</div>
+                @enderror
+            </label><br>
 
             <button type="submit" class="border rounded bg-blue-600 px-4 py-2 text-white">
                 Login
             </button>
 
-            <button type="submit" class="border rounded bg-blue-600 px-4 py-2 text-white">
-                <a href="{{route('posts.create')}}">Create account</a>
-            </button>
+            <div style="text-align: center; margin-top: 15px;">
+                <a href="{{ route('posts.create') }}" style="color: #2563eb; text-decoration: underline;">
+                    ¿No tienes cuenta? Regístrate aquí
+                </a>
+            </div>
         </form>
     </div>
 </x-app-layout>

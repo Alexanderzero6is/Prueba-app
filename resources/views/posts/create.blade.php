@@ -3,11 +3,9 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
-
             display: flex;
             justify-content: center;
             align-items: center;
-
             height: 100vh;
             margin: 0;
         }
@@ -16,80 +14,90 @@
             background-color: white;
             padding: 30px;
             width: 350px;
-
             border-radius: 10px;
-
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
 
         h2 {
             text-align: center;
-        }
-
-        label {
-            display: block;
-            margin-top: 15px;
+            margin-top: 0;
+            color: #111827;
         }
 
         input {
             width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-
+            padding: 12px;
+            margin-top: 8px;
             box-sizing: border-box;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            outline: none;
+            transition: all 0.3s ease-in-out;
+        }
+
+        input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        input::placeholder {
+            color: #9ca3af;
+            opacity: 0.7;
+            font-weight: normal;
         }
 
         button {
             width: 100%;
             padding: 10px;
-
             margin-top: 20px;
-
             background-color: #1d4ed8;
             color: white;
-
             border: none;
             cursor: pointer;
+            border-radius: 6px;
+            font-weight: 600;
         }
 
         button:hover {
             background-color: #1e40af;
         }
-
-        .error {
-            color: red;
-            margin-top: 10px;
-            text-align: center;
-        }
     </style>
 
-    <form action="/api/registro" method="POST">
+    <div class="login-container">
+        <h2 class="text-3xl font-bold" style="margin-bottom: 20px;">Registro de Cuenta</h2>
+        
+        <form action="/registro" method="POST">
+            @csrf
+            <label style="font-weight: 600; color: #374151; font-size: 14px; margin-bottom: 5px; display: block;">
+                Nombre de Usuario:
+                <input
+                    type="text"
+                    name="nombre_apellido"
+                    placeholder="Ej: Juan Perez"
+                    required
+                >
+            </label>
+            <br>
 
-        <label>
-            Nombre:
-            <input
-                type="text"
-                name="nombre_apellido"
-                required
-            >
-        </label>
+            <label style="font-weight: 600; color: #374151; font-size: 14px; margin-bottom: 5px; display: block;">
+                Contraseña:
+                <input
+                    type="password"
+                    name="contraseña"
+                    placeholder="••••••••"
+                    required
+                >
+            </label>
 
-        <br><br>
-
-        <label>
-            Contraseña:
-            <input
-                type="password"
-                name="contraseña"
-                required
-            >
-        </label>
-
-        <br><br>
-
-        <button type="submit">
-            Crear cuenta
-        </button>
-
-    </form>
+            <button type="submit">
+                Crear cuenta
+            </button>
+            
+            <a href="{{ route('posts.index') }}" style="text-decoration: none;">
+                <button type="button" style="background-color: #6b7280; margin-top: 10px;">
+                    Volver al Login
+                </button>
+            </a>
+        </form>
+    </div>
 </x-app-layout>

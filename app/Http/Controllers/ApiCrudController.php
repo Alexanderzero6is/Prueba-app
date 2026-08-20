@@ -13,27 +13,34 @@ class ApiCrudController extends Controller
         // Se valida los datos que vienen del formulario
         $request->validate([
             'nombre_apellido' => 'required|string',
-            'contraseña' => 'required|string'
+            'contraseña' => 'required|string',
         ]);
 
         try {
             // Consulta SQL pura inyectada
-            // La tabla se llama 'usuarios' y tiene las columnas 'nombre' y 'password
+            // La tabla se llama 'usuarios' y tiene las columnas 'nombre' y 'password'
             DB::insert('INSERT INTO usuarios (nombre, password) VALUES (?, ?)', [
                 $request->nombre_apellido,
-                Hash::make($request->contraseña) // Siempre hashear contraseñas
+                Hash::make($request->contraseña), // Siempre hashear contraseñas
             ]);
 
-            // Devolvemos una respuesta JSON de éxito
-            return response()->json([
-                'status' => true,
-                'message' => 'Usuario registrado exitosamente en la base de datos.'
-            ], 201);
+            if ($request->expectsJson()) {
+                // Devolvemos una respuesta JSON de éxito
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Usuario registrado exitosamente en la base de datos.'
+                ], 201);
+            }
+
+            // Cuando cree la cuenta, que regrese a la ventana principal
+            return redirect()
+                ->route('posts.index')
+                ->with('success', 'Cuenta creada correctamente.');
 
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
-                'message' => 'Error al insertar en la base de datos: ' . $e->getMessage()
+                'message' => 'Error al insertar en la base de datos: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -43,7 +50,7 @@ class ApiCrudController extends Controller
         // Se validan los datos enviados
         $request->validate([
             'nombre_apellido' => 'required|string',
-            'contraseña' => 'required|string'
+            'contraseña' => 'required|string',
         ]);
 
         try {
@@ -53,17 +60,17 @@ class ApiCrudController extends Controller
             if (empty($usuarios)) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Usuario no encontrado'
+                    'message' => 'Usuario no encontrado',
                 ], 404);
             }
 
             $usuario = $usuarios[0];
 
             // Verificación de la contraseña con el Hash
-            if (!Hash::check($request->contraseña, $usuario->password)) {
+            if (! Hash::check($request->contraseña, $usuario->password)) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Contraseña incorrecta'
+                    'message' => 'Contraseña incorrecta',
                 ], 401);
             }
 
@@ -77,20 +84,35 @@ class ApiCrudController extends Controller
                 $usuario->id,
                 'API Token',
                 $hashedToken,
-                '["*"]'
+                '["*"]',
             ]);
 
-            // Se devuelve el token al usuario
-            return response()->json([
-                'status' => true,
-                'message' => 'Login exitoso',
-                'token' => $plainTextToken // Bearer Token que se usará en el CRUD
-            ], 200);
+            // Se devuelve el token al usuario y servira como postman
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Login exitoso',
+                    'token' => $plainTextToken, // Bearer Token que se usará en el CRUD
+                ], 200);
+            }
+
+            // Si exista el usuario, entrará sin problemas a esta ruta
+            return redirect()
+                ->route('posts.show')
+                ->withCookie(cookie(
+                    'intranet_token',
+                    $plainTextToken,
+                    120,
+                    '/',
+                    null,
+                    false,
+                    true
+                ));
 
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
-                'message' => 'Error en el servidor: ' . $e->getMessage()
+                'message' => 'Error en el servidor: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -100,11 +122,24 @@ class ApiCrudController extends Controller
         // Se extrae el Bearer Token del header de la petición
         $token = $request->bearerToken();
 
-        if (!$token) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Token no proporcionado en la petición'
-            ], 401);
+        // Si no viene como Bearer Token, se busca en la cookie de la intranet
+        if (! $token) {
+            $token = $request->cookie('intranet_token');
+        }
+
+        // Si no existe token ni en header ni en cookie
+        if (! $token) {
+
+            // Si es una petición API
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Token no proporcionado en la petición',
+                ], 401);
+            }
+
+            // Si viene desde Blade
+            return redirect()->route('posts.index');
         }
 
         // Se Hashea el token recibido (así es como lo guardamos en el login)
@@ -115,22 +150,40 @@ class ApiCrudController extends Controller
             $eliminado = DB::delete('DELETE FROM personal_access_tokens WHERE token = ?', [$hashedToken]);
 
             if ($eliminado) {
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Sesión cerrada correctamente. Token revocado.'
-                ], 200);
+                // Si se está utilizando como API
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'status' => true,
+                        'message' => 'Sesión cerrada correctamente. Token revocado.',
+                    ], 200);
+                }
+
+                // Si se está utilizando desde Blade
+                return redirect()
+                    ->route('posts.index')
+                    ->withoutCookie('intranet_token');
             } else {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'El token es inválido o la sesión ya estaba cerrada.'
-                ], 404);
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'El token es inválido o la sesión ya estaba cerrada.',
+                    ], 404);
+                }
+
+                return redirect()
+                    ->route('posts.index')
+                    ->withoutCookie('intranet_token');
             }
 
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Error en el servidor: ' . $e->getMessage()
-            ], 500);
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Error en el servidor: '.$e->getMessage(),
+                ], 500);
+            }
+
+            return redirect()->route('posts.index');
         }
     }
 }

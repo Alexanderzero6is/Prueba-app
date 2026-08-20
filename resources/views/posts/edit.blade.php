@@ -1,5 +1,4 @@
 <x-app-layout>
-
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -23,6 +22,14 @@
             text-align: center;
             margin-top: 0;
             color: #111827;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            color: #374151;
+            font-weight: 600;
+            font-size: 14px;
         }
 
         input {
@@ -67,35 +74,37 @@
     <div class="login-container">
         <h2 class="text-3xl font-bold" style="margin-bottom: 20px;">Editar datos</h2>
 
-        <form action="/api/actualizar" method="POST">
+        <form action="/actualizar" method="POST">
+            @csrf
 
-            <label style="font-weight: 600; color: #374151; font-size: 14px; margin-bottom: 5px; display: block;">
+            <label>
                 Nombre de Usuario:
                 <input
                     type="text"
                     name="nombre_apellido"
-                    placeholder="Ej: Juan_Perez"
+                    value="{{ $usuario->nombre }}"
                     required
                 >
             </label>
-            <br>
 
-            <label style="font-weight: 600; color: #374151; font-size: 14px; margin-bottom: 5px; display: block;">
-                Contraseña:
+            <label>
+                Nueva contraseña:
                 <input
                     type="password"
                     name="contraseña"
                     placeholder="••••••••"
-                    required
                 >
             </label>
 
-
-            <button type="submit" style="background-color: blue; margin-top: 10px;">
+            <button type="submit">
                 Guardar cambios
             </button>
-
+            
+            <a href="{{ route('posts.show') }}" style="text-decoration: none;">
+                <button type="button" style="background-color: #6b7280; margin-top: 10px;">
+                    Volver a la Intranet
+                </button>
+            </a>
         </form>
     </div>
-
 </x-app-layout>

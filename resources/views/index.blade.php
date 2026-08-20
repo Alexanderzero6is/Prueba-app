@@ -4,11 +4,9 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
-
             display: flex;
             justify-content: center;
             align-items: center;
-
             height: 100vh;
             margin: 0;
         }
@@ -17,14 +15,14 @@
             background-color: white;
             padding: 30px;
             width: 350px;
-
             border-radius: 10px;
-
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
 
         h2 {
             text-align: center;
+            margin-top: 0;
+            color: #111827;
         }
 
         label {
@@ -34,10 +32,18 @@
 
         input {
             width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-
+            padding: 12px;
+            margin-top: 8px;
             box-sizing: border-box;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            outline: none;
+            transition: all 0.3s ease-in-out;
+        }
+
+        input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
         }
 
         input::placeholder {
@@ -49,14 +55,13 @@
         button {
             width: 100%;
             padding: 10px;
-
             margin-top: 20px;
-
             background-color: #1d4ed8;
             color: white;
-
             border: none;
             cursor: pointer;
+            border-radius: 6px;
+            font-weight: 600;
         }
 
         button:hover {
@@ -71,12 +76,12 @@
     </style>
 
     <div class="login-container">
-        <h2 class="text-3xl font-bold">Intranet - Login</h2>
+        <h2 class="text-3xl font-bold" style="margin-bottom: 20px;">Intranet - Login</h2>
 
-        <form action="/api/login" method="POST">
+        <form action="login" method="POST">
             @csrf
 
-            <label>
+            <label style="font-weight: 600; color: #374151; font-size: 14px; margin-bottom: 5px; display: block;">
                 Usuario:
                 <input
                     type="text"
@@ -89,7 +94,7 @@
                 @enderror
             </label><br>
 
-            <label>
+            <label style="font-weight: 600; color: #374151; font-size: 14px; margin-bottom: 5px; display: block;">
                 Contraseña:
                 <input
                     type="password"
@@ -106,7 +111,7 @@
                 Login
             </button>
 
-            <div style="text-align: center; margin-top: 15px;">
+            <div style="text-align: center; margin-top: 20px;">
                 <a href="{{ route('posts.create') }}" style="color: #2563eb; text-decoration: underline;">
                     ¿No tienes cuenta? Regístrate aquí
                 </a>

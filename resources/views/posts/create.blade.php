@@ -66,7 +66,7 @@
     <div class="login-container">
         <h2 class="text-3xl font-bold" style="margin-bottom: 20px;">Registro de Cuenta</h2>
 
-        <form action="/api/registro" method="POST">
+        <form action="registro" method="POST">
             @csrf
             <label style="font-weight: 600; color: #374151; font-size: 14px; margin-bottom: 5px; display: block;">
                 Nombre de Usuario:

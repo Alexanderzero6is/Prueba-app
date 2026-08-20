@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ApiCrudController;
 use Illuminate\Support\Facades\Route;
 
 // Página inicial - login
@@ -20,3 +21,11 @@ Route::get('/intranet', [PostController::class, 'show'])
 Route::get('/editar', [PostController::class, 'edit'])
     ->name('posts.edit')
     ->middleware('intranet.auth');
+
+
+// --- RUTAS POST PARA LA WEB (Arquitectura Híbrida) ---
+Route::post('/login', [ApiCrudController::class, 'login']);
+Route::post('/registro', [ApiCrudController::class, 'store']);
+Route::post('/logout', [ApiCrudController::class, 'logout']);
+Route::post('/actualizar', [ApiCrudController::class, 'update']);
+Route::delete('/delete-account', [ApiCrudController::class, 'destroy']);

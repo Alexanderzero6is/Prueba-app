@@ -1,58 +1,239 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Prueba App - Intranet
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## 📋 Descripción General
 
-## About Laravel
+**Prueba App** es una aplicación de intranet desarrollada con Laravel que permite a los empleados gestionar sus cuentas de usuario de forma segura. La plataforma ofrece funcionalidades básicas de CRUD (crear, leer, actualizar, eliminar) para perfiles de usuario con un sistema de autenticación integrado.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Funcionalidades principales
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- ✅ **Autenticación de usuarios**: Sistema de login seguro con validación de credenciales
+- ✅ **Registro de nuevos usuarios**: Creación de cuentas en la intranet
+- ✅ **Gestión de perfil**: Ver y editar información personal de la cuenta
+- ✅ **Panel de intranet**: Acceso a recursos internos con autenticación
+- ✅ **Eliminación de cuentas**: Opción para borrar la cuenta de usuario
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 🛠️ Documentación Técnica
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Requisitos Previos
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **PHP**: 8.3 o superior
+- **Laravel**: 13.17
+- **Node.js**: 16+ (para gestión de activos frontend)
+- **Composer**: 2.0+
+- **Base de datos**: SQLite (por defecto) o MySQL/PostgreSQL
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+### Stack Tecnológico
 
-## Agentic Development
+- **Backend**: Laravel 13.17
+- **Base de datos**: SQLite
+- **Frontend**: Vite + npm
+- **Testing**: Pest + Mockery
+- **Code Quality**: Laravel Pint
+- **Herramientas de desarrollo**: Laravel Boost, Laravel Pail
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### Arquitectura del Proyecto
 
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+```
+prueba-app/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/    # PostController (gestión de usuarios)
+│   │   └── Middleware/     # Middleware personalizado (intranet.auth)
+│   └── Models/             # Modelos Eloquent
+├── routes/
+│   ├── web.php            # Rutas principales
+│   ├── api.php            # Rutas API (si aplica)
+│   └── console.php        # Comandos Artisan
+├── resources/              # Vistas y activos frontend
+├── database/
+│   ├── migrations/         # Migraciones de BD
+│   ├── factories/          # Factories para testing
+│   └── seeders/            # Seeders para datos
+├── tests/                  # Tests con Pest
+├── config/                 # Configuración de la aplicación
+└── public/                 # Punto de entrada web
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### Rutas Disponibles
 
-## Contributing
+| Método | Ruta | Descripción | Autenticación |
+|--------|------|-------------|----------------|
+| GET | `/` | Página de login | No |
+| GET | `/registro` | Página de registro | No |
+| GET | `/intranet` | Panel principal de la intranet | Sí |
+| GET | `/editar` | Página para editar perfil | Sí |
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Middleware Personalizado
 
-## Code of Conduct
+- **`intranet.auth`**: Valida la autenticación del usuario para acceder a rutas protegidas
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+## 🚀 Instalación y Configuración
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 1. Clonar el repositorio
 
-## License
+```bash
+git clone <repositorio-url>
+cd prueba-app
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 2. Instalar dependencias
+
+```bash
+composer setup
+```
+
+Este comando ejecutará automáticamente:
+- Instalación de dependencias PHP
+- Configuración del archivo `.env`
+- Generación de clave de aplicación
+- Ejecución de migraciones
+- Instalación de dependencias Node.js
+- Compilación de activos frontend
+
+### 3. Ejecutar en desarrollo
+
+```bash
+composer run dev
+```
+
+Esto inicia:
+- Servidor PHP (puerto 8000)
+- Cola de trabajo (queue listener)
+- Desarrollo de Vite (hot reload)
+
+### 4. Acceder a la aplicación
+
+```
+http://localhost:8000
+```
+
+---
+
+## 📖 Guía de Uso - Para Usuarios
+
+### 1. Crear una Cuenta
+
+1. Dirígete a la página de inicio
+2. Haz clic en **"Crear Cuenta"** o ve a `/registro`
+3. Completa el formulario con tu información:
+   - Nombre completo
+   - Correo electrónico
+   - Contraseña segura
+4. Haz clic en **"Registrarse"**
+5. Recibirás una confirmación de registro exitoso
+
+### 2. Acceder a la Intranet
+
+1. Dirígete a la página de inicio (`/`)
+2. Inicia sesión con tu correo y contraseña
+3. Accederás al **panel de intranet** (`/intranet`) con acceso a recursos internos
+
+### 3. Editar tu Perfil
+
+1. Desde el panel de intranet, ve a **"Editar Perfil"** (`/editar`)
+2. Actualiza tu información personal:
+   - Nombre
+   - Correo electrónico
+   - Contraseña (opcional)
+3. Haz clic en **"Guardar cambios"**
+
+### 4. Eliminar tu Cuenta
+
+1. En la página de editar perfil, encontrarás la opción **"Eliminar Cuenta"**
+2. Confirma la acción (esta acción es irreversible)
+3. Tu cuenta y datos asociados serán eliminados permanentemente
+
+---
+
+## 🧪 Testing
+
+### Ejecutar todos los tests
+
+```bash
+composer test
+```
+
+### Ejecutar tests específicos
+
+```bash
+php artisan test --filter=testName
+```
+
+### Ver cobertura de tests
+
+```bash
+php artisan test --coverage
+```
+
+---
+
+## 💻 Desarrollo
+
+### Comandos útiles
+
+```bash
+# Generar un modelo nuevo con migraciones y factory
+php artisan make:model NombreModelo -mf
+
+# Crear un controlador
+php artisan make:controller NombreControlador
+
+# Crear un middleware personalizado
+php artisan make:middleware NombreMiddleware
+
+# Listar todas las rutas
+php artisan route:list
+
+# Ejecutar migraciones
+php artisan migrate
+
+# Revertir última migración
+php artisan migrate:rollback
+```
+
+###
+### 📝 Variables de Entorno
+
+Configura el archivo `.env` con las siguientes variables importantes:
+
+```env
+APP_NAME="Prueba App"
+APP_ENV=local
+APP_KEY=
+APP_DEBUG=true
+APP_URL=http://localhost:8000
+
+DB_CONNECTION=mysql
+# DB_DATABASE=/full/path/to/database.sqlite
+
+MAIL_DRIVER=log
+```
+
+---
+
+## 📊 Estructura de Base de Datos
+
+La aplicación utiliza una tabla principal de usuarios con campos como:
+
+- `id`: Identificador único
+- `name`: Nombre del usuario
+-
+- `password`: Contraseña hasheada
+- `created_at`: Fecha de creación
+- `updated_at`: Última actualización
+
+---
+
+## 🔐 Seguridad
+
+- ✅ Las contraseñas se hashean con **bcrypt**
+- ✅ Validación de entrada en todos los formularios
+- ✅ Middleware `intranet.auth` protege rutas sensibles
+- ✅ Protección contra CSRF en formularios
+- ✅ Escapado de salida en vistas
+
+

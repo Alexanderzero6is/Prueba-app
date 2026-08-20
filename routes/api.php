@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PostController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApiCrudController;
@@ -16,3 +17,6 @@ Route::post('/login', [ApiCrudController::class, 'login']);
 
 // Ruta de Post para cerrar sesión y eliminar el token de acceso
 Route::post('/logout', [ApiCrudController::class, 'logout']);
+
+// Ruta para editar los datos del usuario
+Route::post('/actualizar', [ApiCrudController::class, 'update']);

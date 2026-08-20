@@ -16,17 +16,21 @@ class PostController extends Controller
         return view('posts.create');
     }
 
-    public function edit()
+    public function edit(Request $request)
     {
-        return view('posts.edit');
+        $usuario = $request->attributes->get('usuario_intranet');
+
+        if (!$usuario) {
+            return redirect()->route('posts.index');
+        }
+
+        return view('posts.edit', compact('usuario'));
     }
 
     public function show(Request $request)
     {
         $usuario = $request->attributes->get('usuario_intranet');
 
-        return view('posts.show', [
-            'usuario' => $usuario,
-        ]);
+        return view('posts.show', compact('usuario'));
     }
 }

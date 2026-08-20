@@ -194,4 +194,103 @@ class ApiCrudController extends Controller
             return redirect()->route('posts.index');
         }
     }
+
+    public function update(Request $request)
+    {
+        // Validamos los datos enviados desde el formulario
+        $request->validate([
+            'nombre_apellido' => 'required|string',
+            'contraseña' => 'nullable|string',
+        ]);
+
+        // Primero intentamos obtener el Bearer Token
+        $token = $request->bearerToken();
+
+        // Si viene desde Blade, usamos la cookie
+        if (! $token) {
+            $token = $request->cookie('intranet_token');
+        }
+
+        // Si no existe token, el usuario no está autenticado
+        if (! $token) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Token no proporcionado.',
+            ], 401);
+        }
+
+        // Hasheamos el token para compararlo con la BD
+        $hashedToken = hash('sha256', $token);
+
+        try {
+
+            // Buscamos a qué usuario pertenece el token
+            $registroToken = DB::selectOne(
+                'SELECT tokenable_id
+             FROM personal_access_tokens
+             WHERE token = ?
+             LIMIT 1',
+                [$hashedToken]
+            );
+
+            if (! $registroToken) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Token inválido.',
+                ], 401);
+            }
+
+            // Obtenemos el ID del usuario autenticado
+            $usuarioId = $registroToken->tokenable_id;
+
+            // Si el usuario escribió una nueva contraseña
+            if ($request->filled('contraseña')) {
+
+                DB::update(
+                    'UPDATE usuarios
+                 SET nombre = ?, password = ?
+                 WHERE id = ?',
+                    [
+                        $request->nombre_apellido,
+                        Hash::make($request->contraseña),
+                        $usuarioId,
+                    ]
+                );
+
+            } else {
+
+                // Si no escribió contraseña,
+                // actualizamos solamente el nombre
+                DB::update(
+                    'UPDATE usuarios
+                 SET nombre = ?
+                 WHERE id = ?',
+                    [
+                        $request->nombre_apellido,
+                        $usuarioId,
+                    ]
+                );
+            }
+
+            // Si se utiliza como API
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Usuario actualizado correctamente.',
+                ], 200);
+            }
+
+            // Si viene desde Blade
+            return redirect()
+                ->route('posts.show')
+                ->with('success', 'Datos actualizados correctamente.');
+
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Error al actualizar el usuario: '.$e->getMessage(),
+            ], 500);
+        }
+    }
 }

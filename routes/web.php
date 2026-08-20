@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\PostController;
-use App\Http\Controllers\ApiCrudController;
 use Illuminate\Support\Facades\Route;
 
 // Página inicial - login
@@ -25,8 +24,3 @@ Route::get('/usuarios', [PostController::class, 'usuarios'])
 // Página para editar tu cuenta
 Route::get('/editar', [PostController::class, 'edit'])
     ->name('posts.edit');
-
-// Nuevas rutas POST para que las vistas HTML puedan usar sesiones:
-Route::post('/login', [ApiCrudController::class, 'login']);
-Route::post('/registro', [ApiCrudController::class, 'store']);
-Route::post('/logout', [ApiCrudController::class, 'logout']);

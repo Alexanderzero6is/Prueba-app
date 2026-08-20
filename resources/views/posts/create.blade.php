@@ -73,9 +73,26 @@
                 <input
                     type="text"
                     name="nombre_apellido"
+                    value="{{ old('nombre_apellido') }}"
                     placeholder="Ej: Juan_Perez"
                     required
+
+                    style="
+                        @if($errors->has('nombre_apellido'))
+                            border: 2px solid #dc2626;
+                            background-color: #fef2f2;
+                        @endif
+                    "
                 >
+                @error('nombre_apellido')
+                    <div style="
+                        color: #dc2626;
+                        font-size: 13px;
+                        margin-top: 5px;
+                    ">
+                        {{ $message }}
+                    </div>
+                @enderror
             </label>
             <br>
 

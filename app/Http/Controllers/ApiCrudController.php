@@ -17,6 +17,20 @@ class ApiCrudController extends Controller
         ]);
 
         try {
+
+            // Verificar si ya existe ese nombre
+            $usuarioExistente = DB::selectOne('SELECT id FROM usuarios WHERE nombre = ? LIMIT 1', [$request->nombre_apellido]);
+
+            // Si ya existe, regresar al formulario
+            if ($usuarioExistente) {
+
+                return back()
+                    ->withErrors([
+                        'nombre_apellido' => 'Nombre de usuario ya existente.'
+                    ])
+                    ->withInput();
+            }
+
             // Consulta SQL pura inyectada
             // La tabla se llama 'usuarios' y tiene las columnas 'nombre' y 'password'
             DB::insert('INSERT INTO usuarios (nombre, password) VALUES (?, ?)', [
